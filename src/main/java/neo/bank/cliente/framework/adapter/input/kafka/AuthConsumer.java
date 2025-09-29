@@ -61,10 +61,10 @@ public class AuthConsumer {
                 switch (eventType) {
                     case EVENT_UTENTE_REGISTRATO:{
                         UsernameCliente usernameCliente = new UsernameCliente(json.get("username").asText());
+                        Email emailCliente = new Email(json.get("email").asText());
                         try {
                             NomeCliente nomeCliente = new NomeCliente(json.get("nome").asText());
                             CognomeCliente cognomeCliente = new CognomeCliente(json.get("cognome").asText());
-                            Email emailCliente = new Email(json.get("email").asText());
                             DataNascita dataNascita = new DataNascita(LocalDate.parse(json.get("dataNascita").asText()));
                             Telefono telefono = new Telefono(json.get("telefono").asText());
                             Residenza residenza = new Residenza(json.get("residenza").asText());
@@ -73,7 +73,7 @@ public class AuthConsumer {
                             
                         }catch(RuntimeException ex) {
                             log.error("Errore.", ex);
-                            clienteEventPublisher.publishError(Cliente.AGGREGATE_NAME, "CreazioneClienteFallita", new IECreazioneClienteFallita(usernameCliente.username()));
+                            clienteEventPublisher.publishError(Cliente.AGGREGATE_NAME, "CreazioneClienteFallita", new IECreazioneClienteFallita(usernameCliente.username(), emailCliente.indirizzo()));
                         }
                         break;
                     }

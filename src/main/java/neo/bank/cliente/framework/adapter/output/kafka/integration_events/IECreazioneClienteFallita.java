@@ -7,4 +7,5 @@ import lombok.Value;
 @Value
 public class IECreazioneClienteFallita implements Serializable {
     private String usernameCliente;
+    private String emailCliente;
 }
