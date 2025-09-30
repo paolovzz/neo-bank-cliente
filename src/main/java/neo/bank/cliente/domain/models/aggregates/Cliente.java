@@ -1,19 +1,22 @@
 package neo.bank.cliente.domain.models.aggregates;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import neo.bank.cliente.domain.models.events.ClienteCreato;
 import neo.bank.cliente.domain.models.events.EventPayload;
-import neo.bank.cliente.domain.models.vo.CodiceCliente;
-import neo.bank.cliente.domain.models.vo.DatiAnagraficiCliente;
-import neo.bank.cliente.domain.models.vo.IamId;
+import neo.bank.cliente.domain.models.events.ResidenzaAggiornata;
+import neo.bank.cliente.domain.models.events.TelefonoAggiornato;
+import neo.bank.cliente.domain.models.vo.CodiceFiscale;
+import neo.bank.cliente.domain.models.vo.CognomeCliente;
+import neo.bank.cliente.domain.models.vo.DataNascita;
+import neo.bank.cliente.domain.models.vo.Email;
 import neo.bank.cliente.domain.models.vo.IdCliente;
-import neo.bank.cliente.domain.models.vo.IdContoCorrente;
+import neo.bank.cliente.domain.models.vo.NomeCliente;
+import neo.bank.cliente.domain.models.vo.Residenza;
+import neo.bank.cliente.domain.models.vo.Telefono;
+import neo.bank.cliente.domain.models.vo.UsernameCliente;
 import neo.bank.cliente.domain.services.GeneratoreIdClienteService;
 
 
@@ -25,29 +28,67 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
 
     public static final String AGGREGATE_NAME = "CLIENTE";
     private IdCliente idCliente;
-    private CodiceCliente codiceCliente;
-    private DatiAnagraficiCliente datiAnagrafici;
-    private IamId iamId;
-    private Map<IdContoCorrente, Boolean> contiAssociati = new HashMap<>();
+    private UsernameCliente usernameCliente;
+    private NomeCliente nomeCliente;
+    private CognomeCliente cognomeCliente;
+    private DataNascita dataNascita;
+    private CodiceFiscale codiceFiscale;
+    private Email email;
+    private Telefono telefono;
+    private Residenza residenza;
 
-    public static Cliente crea(GeneratoreIdClienteService generatoreIdCliente, DatiAnagraficiCliente datiAnagrafici) {
+    public static Cliente crea(GeneratoreIdClienteService generatoreIdCliente, UsernameCliente usernameCliente,
+        NomeCliente nomeCliente,
+        CognomeCliente cognomeCliente,
+        DataNascita dataNascita,
+        CodiceFiscale codiceFiscale,
+        Email email,
+        Telefono telefono,
+        Residenza residenza) {
 
         IdCliente idCliente = generatoreIdCliente.genera();
         Cliente cliente = new Cliente();
         cliente.idCliente = idCliente;
-        cliente.events(new ClienteCreato(idCliente, datiAnagrafici));
+        cliente.events(new ClienteCreato(idCliente, usernameCliente, nomeCliente, cognomeCliente, dataNascita, codiceFiscale, email, telefono, residenza));
         return cliente;
+    }
+
+    public void aggiornaResidenza(Residenza residenza) {
+        events(new ResidenzaAggiornata(residenza));
+    }
+
+    public void aggiornaTelefono(Telefono telefono) {
+        events(new TelefonoAggiornato(telefono));
     }
 
     private void apply(ClienteCreato event) {
         this.idCliente = event.idCliente();
-        this.datiAnagrafici = event.datiAnagrafici();
+        this.nomeCliente = event.nomeCliente();
+        this.usernameCliente = event.usernameCliente();
+        this.nomeCliente = event.nomeCliente();
+        this.cognomeCliente = event.cognomeCliente();
+        this.dataNascita = event.dataNascita();
+        this.codiceFiscale = event.codiceFiscale();
+        this.email = event.email();
+        this.telefono = event.telefono();
+        this.residenza = event.residenza();
+
+    }
+
+    private void apply(ResidenzaAggiornata event) {
+        this.residenza = event.residenza();
+    }
+
+    private void apply(TelefonoAggiornato event) {
+        this.telefono = event.telefono();
     }
 
     @Override
     public void apply(EventPayload event) {
          switch (event) {
             case ClienteCreato ev -> apply((ClienteCreato) ev);
+            case ResidenzaAggiornata ev -> apply((ResidenzaAggiornata) ev);
+            case TelefonoAggiornato ev -> apply((TelefonoAggiornato) ev);
             default -> throw new IllegalArgumentException("Evento non supportato");
         }
     }

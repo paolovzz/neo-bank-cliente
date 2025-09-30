@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
+import neo.bank.cliente.application.exceptions.ClienteNonTrovatoException;
 import neo.bank.cliente.application.ports.output.ClienteOutputPort;
 import neo.bank.cliente.application.ports.output.ClienteRepositoryPort;
 import neo.bank.cliente.application.ports.output.EventsPublisherPort;
@@ -29,7 +30,11 @@ public class ClienteOutputAdapter  implements ClienteOutputPort{
 
     @Override
     public Cliente recuperaDaId(IdCliente idCliente) {
-       return ccRepo.findById(idCliente.id());
+        Cliente cliente = ccRepo.findById(idCliente.id());
+        if(cliente == null) {
+            throw new ClienteNonTrovatoException(idCliente.id());
+        }
+       return cliente;
     }
     
 }

@@ -23,7 +23,6 @@ import neo.bank.cliente.domain.models.aggregates.Cliente;
 import neo.bank.cliente.domain.models.vo.CodiceFiscale;
 import neo.bank.cliente.domain.models.vo.CognomeCliente;
 import neo.bank.cliente.domain.models.vo.DataNascita;
-import neo.bank.cliente.domain.models.vo.DatiAnagraficiCliente;
 import neo.bank.cliente.domain.models.vo.Email;
 import neo.bank.cliente.domain.models.vo.NomeCliente;
 import neo.bank.cliente.domain.models.vo.Residenza;
@@ -69,7 +68,7 @@ public class AuthConsumer {
                             Telefono telefono = new Telefono(json.get("telefono").asText());
                             Residenza residenza = new Residenza(json.get("residenza").asText());
                             CodiceFiscale codiceFiscale = new CodiceFiscale(json.get("codiceFiscale").asText());
-                            app.creaCliente(new CreaClienteCmd(new DatiAnagraficiCliente(usernameCliente, nomeCliente, cognomeCliente, dataNascita, codiceFiscale, emailCliente, telefono, residenza)));
+                            app.creaCliente(new CreaClienteCmd(usernameCliente, nomeCliente, cognomeCliente, dataNascita, codiceFiscale, emailCliente, telefono, residenza));
                             
                         }catch(RuntimeException ex) {
                             log.error("Errore.", ex);
