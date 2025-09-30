@@ -11,12 +11,15 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import neo.bank.cliente.application.ClienteUseCase;
+import neo.bank.cliente.application.ports.input.dto.AggiornaEmailCmd;
 import neo.bank.cliente.application.ports.input.dto.AggiornaResidenzaCmd;
 import neo.bank.cliente.application.ports.input.dto.AggiornaTelefonoCmd;
 import neo.bank.cliente.domain.models.aggregates.Cliente;
+import neo.bank.cliente.domain.models.vo.Email;
 import neo.bank.cliente.domain.models.vo.IdCliente;
 import neo.bank.cliente.domain.models.vo.Residenza;
 import neo.bank.cliente.domain.models.vo.Telefono;
+import neo.bank.cliente.framework.adapter.input.rest.request.RichiediAggiornamentoEmailRequest;
 import neo.bank.cliente.framework.adapter.input.rest.request.RichiediAggiornamentoResidenzaRequest;
 import neo.bank.cliente.framework.adapter.input.rest.request.RichiediAggiornamentoTelefonoRequest;
 import neo.bank.cliente.framework.adapter.input.rest.response.ClienteInfoResponse;
@@ -51,6 +54,14 @@ public class ClienteResource {
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response aggiornaTelefono(@PathParam(value = "id") String idCliente,  RichiediAggiornamentoTelefonoRequest req) {
         app.aggiornaTelefono(new AggiornaTelefonoCmd(new IdCliente(idCliente), new Telefono(req.getTelefono())));
+        return Response.noContent().build();
+    }
+
+    @Path("/{id}/email")
+    @POST // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response aggiornaEmail(@PathParam(value = "id") String idCliente,  RichiediAggiornamentoEmailRequest req) {
+        app.aggiornaEmail(new AggiornaEmailCmd(new IdCliente(idCliente), new Email(req.getEmail())));
         return Response.noContent().build();
     }
     

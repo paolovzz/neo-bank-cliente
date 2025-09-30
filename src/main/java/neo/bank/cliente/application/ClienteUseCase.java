@@ -3,6 +3,7 @@ package neo.bank.cliente.application;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import neo.bank.cliente.application.ports.input.dto.AggiornaEmailCmd;
 import neo.bank.cliente.application.ports.input.dto.AggiornaResidenzaCmd;
 import neo.bank.cliente.application.ports.input.dto.AggiornaTelefonoCmd;
 import neo.bank.cliente.application.ports.input.dto.CreaClienteCmd;
@@ -49,6 +50,15 @@ public class ClienteUseCase {
         cliente.aggiornaTelefono(cmd.getTelefono());
         clienteOutputPort.salva(cliente);
         log.info("Comando [aggiornaTelefono] terminato...");
+    }
+
+
+    public void aggiornaEmail(AggiornaEmailCmd cmd) {
+        log.info("Comando [aggiornaEmail] in esecuzione...");
+        Cliente cliente = clienteOutputPort.recuperaDaId(cmd.getIdCliente());
+        cliente.aggiornaEmail(cmd.getEmail());
+        clienteOutputPort.salva(cliente);
+        log.info("Comando [aggiornaEmail] terminato...");
     }
 
 }

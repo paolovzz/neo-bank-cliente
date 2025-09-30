@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import neo.bank.cliente.domain.models.events.ClienteCreato;
+import neo.bank.cliente.domain.models.events.EmailAggiornata;
 import neo.bank.cliente.domain.models.events.EventPayload;
 import neo.bank.cliente.domain.models.events.ResidenzaAggiornata;
 import neo.bank.cliente.domain.models.events.TelefonoAggiornato;
@@ -61,6 +62,10 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
         events(new TelefonoAggiornato(telefono));
     }
 
+    public void aggiornaEmail(Email email) {
+        events(new EmailAggiornata(usernameCliente, email));
+    }
+
     private void apply(ClienteCreato event) {
         this.idCliente = event.idCliente();
         this.nomeCliente = event.nomeCliente();
@@ -83,12 +88,17 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
         this.telefono = event.telefono();
     }
 
+    private void apply(EmailAggiornata event) {
+        this.email = event.email();
+    }
+
     @Override
     public void apply(EventPayload event) {
          switch (event) {
             case ClienteCreato ev -> apply((ClienteCreato) ev);
             case ResidenzaAggiornata ev -> apply((ResidenzaAggiornata) ev);
             case TelefonoAggiornato ev -> apply((TelefonoAggiornato) ev);
+            case EmailAggiornata ev -> apply((EmailAggiornata) ev);
             default -> throw new IllegalArgumentException("Evento non supportato");
         }
     }
