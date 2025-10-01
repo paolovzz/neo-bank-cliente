@@ -24,7 +24,7 @@ import neo.bank.cliente.framework.adapter.input.rest.request.RichiediAggiornamen
 import neo.bank.cliente.framework.adapter.input.rest.request.RichiediAggiornamentoTelefonoRequest;
 import neo.bank.cliente.framework.adapter.input.rest.response.ClienteInfoResponse;
 
-@Path("/cliente")
+@Path("/clienti")
 @ApplicationScoped
 public class ClienteResource {
 
