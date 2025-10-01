@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import lombok.Getter;
 import neo.bank.cliente.domain.models.aggregates.Cliente;
-import neo.bank.cliente.domain.models.vo.DatiAnagraficiCliente;
 
 @Getter
 public class ClienteInfoResponse {

@@ -8,7 +8,7 @@ public record Email(String indirizzo){
     public Email(String indirizzo) {
         String regexEmail = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         if (indirizzo == null || !indirizzo.matches(regexEmail)) {
-            throw new ValidazioneException(DatiAnagraficiCliente.class.getSimpleName(), CodiceErrore.EMAIL_NON_VALIDA.getCodice());
+            throw new ValidazioneException(Email.class.getSimpleName(), CodiceErrore.EMAIL_NON_VALIDA.getCodice());
         }
         this.indirizzo = indirizzo;
     }
