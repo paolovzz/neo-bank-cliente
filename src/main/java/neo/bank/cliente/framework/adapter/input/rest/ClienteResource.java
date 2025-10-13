@@ -19,6 +19,7 @@ import neo.bank.cliente.domain.models.vo.Email;
 import neo.bank.cliente.domain.models.vo.IdCliente;
 import neo.bank.cliente.domain.models.vo.Residenza;
 import neo.bank.cliente.domain.models.vo.Telefono;
+import neo.bank.cliente.domain.models.vo.UsernameCliente;
 import neo.bank.cliente.framework.adapter.input.rest.request.RichiediAggiornamentoEmailRequest;
 import neo.bank.cliente.framework.adapter.input.rest.request.RichiediAggiornamentoResidenzaRequest;
 import neo.bank.cliente.framework.adapter.input.rest.request.RichiediAggiornamentoTelefonoRequest;
@@ -31,37 +32,37 @@ public class ClienteResource {
     @Inject
     private ClienteUseCase app;
 
-    @Path("/{id}")
+    @Path("/{username}")
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response recuperaClienteDaId(@PathParam(value = "id") String idCliente) {
+    public Response recuperaClienteDaUsername(@PathParam(value = "username") String username) {
 
-        Cliente cliente = app.recuperaClienteDaId(new IdCliente(idCliente));
+        Cliente cliente = app.recuperaClienteDaUsername(new UsernameCliente(username));
         ClienteInfoResponse bodyResponse = new ClienteInfoResponse(cliente);
         return Response.ok(bodyResponse).build();
     }
-    
-    @Path("/{id}/residenza")
+
+    @Path("/{username}/residenza")
     @POST // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response aggiornaResidenza(@PathParam(value = "id") String idCliente,  RichiediAggiornamentoResidenzaRequest req) {
-        app.aggiornaResidenza(new AggiornaResidenzaCmd(new IdCliente(idCliente), new Residenza(req.getResidenza())));
+    public Response aggiornaResidenza(@PathParam(value = "username") String username,  RichiediAggiornamentoResidenzaRequest req) {
+        app.aggiornaResidenza(new AggiornaResidenzaCmd(new UsernameCliente(username), new Residenza(req.getResidenza())));
         return Response.noContent().build();
     }
 
-    @Path("/{id}/telefono")
+    @Path("/{username}/telefono")
     @POST // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response aggiornaTelefono(@PathParam(value = "id") String idCliente,  RichiediAggiornamentoTelefonoRequest req) {
-        app.aggiornaTelefono(new AggiornaTelefonoCmd(new IdCliente(idCliente), new Telefono(req.getTelefono())));
+    public Response aggiornaTelefono(@PathParam(value = "username") String username,  RichiediAggiornamentoTelefonoRequest req) {
+        app.aggiornaTelefono(new AggiornaTelefonoCmd(new UsernameCliente(username), new Telefono(req.getTelefono())));
         return Response.noContent().build();
     }
 
-    @Path("/{id}/email")
+    @Path("/{username}/email")
     @POST // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response aggiornaEmail(@PathParam(value = "id") String idCliente,  RichiediAggiornamentoEmailRequest req) {
-        app.aggiornaEmail(new AggiornaEmailCmd(new IdCliente(idCliente), new Email(req.getEmail())));
+    public Response aggiornaEmail(@PathParam(value = "username") String username,  RichiediAggiornamentoEmailRequest req) {
+        app.aggiornaEmail(new AggiornaEmailCmd(new UsernameCliente(username), new Email(req.getEmail())));
         return Response.noContent().build();
     }
     

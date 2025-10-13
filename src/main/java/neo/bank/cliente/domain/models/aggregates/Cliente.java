@@ -1,18 +1,24 @@
 package neo.bank.cliente.domain.models.aggregates;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import neo.bank.cliente.domain.models.events.ClienteCreato;
+import neo.bank.cliente.domain.models.events.ContoCorrenteAssociato;
 import neo.bank.cliente.domain.models.events.EmailAggiornata;
 import neo.bank.cliente.domain.models.events.EventPayload;
 import neo.bank.cliente.domain.models.events.ResidenzaAggiornata;
 import neo.bank.cliente.domain.models.events.TelefonoAggiornato;
+import neo.bank.cliente.domain.models.exceptions.BusinessRuleException;
 import neo.bank.cliente.domain.models.vo.CodiceFiscale;
 import neo.bank.cliente.domain.models.vo.CognomeCliente;
 import neo.bank.cliente.domain.models.vo.DataNascita;
 import neo.bank.cliente.domain.models.vo.Email;
+import neo.bank.cliente.domain.models.vo.Iban;
 import neo.bank.cliente.domain.models.vo.IdCliente;
 import neo.bank.cliente.domain.models.vo.NomeCliente;
 import neo.bank.cliente.domain.models.vo.Residenza;
@@ -37,6 +43,7 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
     private Email email;
     private Telefono telefono;
     private Residenza residenza;
+    private List<Iban> contiAssociati = new ArrayList<>();
 
     public static Cliente crea(GeneratoreIdClienteService generatoreIdCliente, UsernameCliente usernameCliente,
         NomeCliente nomeCliente,
@@ -66,6 +73,14 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
         events(new EmailAggiornata(usernameCliente, email));
     }
 
+    public void associaContoCorrente(Iban iban) {
+        if(contiAssociati.stream().anyMatch(e -> e.equals(iban))) {
+            throw new BusinessRuleException("Conto corrente gia associato");
+        }
+
+        events(new ContoCorrenteAssociato(iban));
+    }
+
     private void apply(ClienteCreato event) {
         this.idCliente = event.idCliente();
         this.nomeCliente = event.nomeCliente();
@@ -84,6 +99,10 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
         this.residenza = event.residenza();
     }
 
+    private void apply(ContoCorrenteAssociato event) {
+        this.contiAssociati.add(event.iban());
+    }
+
     private void apply(TelefonoAggiornato event) {
         this.telefono = event.telefono();
     }
@@ -99,6 +118,7 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
             case ResidenzaAggiornata ev -> apply((ResidenzaAggiornata) ev);
             case TelefonoAggiornato ev -> apply((TelefonoAggiornato) ev);
             case EmailAggiornata ev -> apply((EmailAggiornata) ev);
+            case ContoCorrenteAssociato ev -> apply((ContoCorrenteAssociato) ev);
             default -> throw new IllegalArgumentException("Evento non supportato");
         }
     }

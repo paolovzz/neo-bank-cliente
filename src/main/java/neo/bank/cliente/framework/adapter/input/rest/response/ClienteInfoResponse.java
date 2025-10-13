@@ -1,6 +1,7 @@
 package neo.bank.cliente.framework.adapter.input.rest.response;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.Getter;
 import neo.bank.cliente.domain.models.aggregates.Cliente;
@@ -15,6 +16,7 @@ public class ClienteInfoResponse {
     private String codiceFiscale;
     private String telefono;
     private String residenza;
+    private List<String> contiAssociati;
 
     public ClienteInfoResponse(Cliente cliente) {
         this.nome = cliente.getNomeCliente().nome();
@@ -24,6 +26,7 @@ public class ClienteInfoResponse {
         this.codiceFiscale = cliente.getCodiceFiscale().codice();
         this.telefono = cliente.getTelefono().numero();
         this.residenza = cliente.getResidenza().residenza();
+        this.contiAssociati = cliente.getContiAssociati().stream().map(iban -> iban.codice()).toList();
     }
 
     
