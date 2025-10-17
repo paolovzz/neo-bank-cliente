@@ -1,10 +1,12 @@
 package neo.bank.cliente.framework.adapter.input.rest;
 
+import java.util.List;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -16,7 +18,7 @@ import neo.bank.cliente.application.ports.input.dto.AggiornaResidenzaCmd;
 import neo.bank.cliente.application.ports.input.dto.AggiornaTelefonoCmd;
 import neo.bank.cliente.domain.models.aggregates.Cliente;
 import neo.bank.cliente.domain.models.vo.Email;
-import neo.bank.cliente.domain.models.vo.IdCliente;
+import neo.bank.cliente.domain.models.vo.Iban;
 import neo.bank.cliente.domain.models.vo.Residenza;
 import neo.bank.cliente.domain.models.vo.Telefono;
 import neo.bank.cliente.domain.models.vo.UsernameCliente;
@@ -42,8 +44,17 @@ public class ClienteResource {
         return Response.ok(bodyResponse).build();
     }
 
+    @Path("/{username}/iban")
+    @GET
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response recuperaIbanDaUsername(@PathParam(value = "username") String username) {
+
+        List<Iban> listaIban = app.recuperaCodiciIbanDelCliente(new UsernameCliente(username));
+        return Response.ok(listaIban.stream().map(iban-> iban.codice())).build();
+    }
+
     @Path("/{username}/residenza")
-    @POST // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
+    @PUT // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response aggiornaResidenza(@PathParam(value = "username") String username,  RichiediAggiornamentoResidenzaRequest req) {
         app.aggiornaResidenza(new AggiornaResidenzaCmd(new UsernameCliente(username), new Residenza(req.getResidenza())));
@@ -51,7 +62,7 @@ public class ClienteResource {
     }
 
     @Path("/{username}/telefono")
-    @POST // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
+    @PUT // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response aggiornaTelefono(@PathParam(value = "username") String username,  RichiediAggiornamentoTelefonoRequest req) {
         app.aggiornaTelefono(new AggiornaTelefonoCmd(new UsernameCliente(username), new Telefono(req.getTelefono())));
@@ -59,7 +70,7 @@ public class ClienteResource {
     }
 
     @Path("/{username}/email")
-    @POST // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
+    @PUT // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response aggiornaEmail(@PathParam(value = "username") String username,  RichiediAggiornamentoEmailRequest req) {
         app.aggiornaEmail(new AggiornaEmailCmd(new UsernameCliente(username), new Email(req.getEmail())));

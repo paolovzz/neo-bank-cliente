@@ -1,5 +1,7 @@
 package neo.bank.cliente.application;
 
+import java.util.List;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import neo.bank.cliente.application.ports.input.dto.CreaClienteCmd;
 import neo.bank.cliente.application.ports.output.ClienteOutputPort;
 import neo.bank.cliente.application.ports.output.UsernameProjectionRepositoryPort;
 import neo.bank.cliente.domain.models.aggregates.Cliente;
+import neo.bank.cliente.domain.models.vo.Iban;
 import neo.bank.cliente.domain.models.vo.IdCliente;
 import neo.bank.cliente.domain.models.vo.UsernameCliente;
 import neo.bank.cliente.domain.services.GeneratoreIdClienteService;
@@ -51,6 +54,14 @@ public class ClienteUseCase {
         Cliente cliente = clienteOutputPort.recuperaDaId(idCliente);
         log.info("Recupero terminato");
         return cliente;
+    }
+
+    public List<Iban> recuperaCodiciIbanDelCliente(UsernameCliente usernameCliente) {
+        log.info("Recupero iban cliente per username [{}]", usernameCliente.username());
+        IdCliente idCliente = usernamePort.recuperaDaUsername(usernameCliente);
+        Cliente cliente = clienteOutputPort.recuperaDaId(idCliente);
+        log.info("Recupero terminato");
+        return cliente.getContiAssociati();
     }
 
     public void aggiornaResidenza(AggiornaResidenzaCmd cmd) {
