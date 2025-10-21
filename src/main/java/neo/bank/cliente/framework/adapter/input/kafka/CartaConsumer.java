@@ -31,8 +31,8 @@ public class CartaConsumer {
     @Inject
     private ClienteUseCase app;
 
-    private static final String EVENT_OWNER = "CARTA_PREPAGATA";
-    private static final String CARTA_PREPAGATA_CREATA_EVENT_NAME = "CartaPrepagataCreata";
+    private static final String EVENT_OWNER = "CARTA";
+    private static final String CARTA_CREATA_EVENT_NAME = "CartaCreata";
 
     @Incoming("carta-notifications")
     @Blocking
@@ -46,7 +46,7 @@ public class CartaConsumer {
         if (aggregateName.equals(EVENT_OWNER)) {
             JsonNode json = convertToJsonNode(payload);
             switch (eventType) {
-                case CARTA_PREPAGATA_CREATA_EVENT_NAME:{
+                case CARTA_CREATA_EVENT_NAME:{
                     String iban = json.get("iban").asText();
                     String usernameCliente = json.get("usernameCliente").asText();
                     String numeroCarta = json.get("numeroCarta").asText();

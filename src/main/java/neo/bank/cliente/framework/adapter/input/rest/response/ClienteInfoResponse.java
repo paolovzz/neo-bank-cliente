@@ -17,6 +17,7 @@ public class ClienteInfoResponse {
     private String telefono;
     private String residenza;
     private List<String> contiAssociati;
+    private List<String> carteAssociate;
 
     public ClienteInfoResponse(Cliente cliente) {
         this.nome = cliente.getNomeCliente().nome();
@@ -27,6 +28,7 @@ public class ClienteInfoResponse {
         this.telefono = cliente.getTelefono().numero();
         this.residenza = cliente.getResidenza().residenza();
         this.contiAssociati = cliente.getContiAssociati().stream().map(iban -> iban.codice()).toList();
+        this.carteAssociate = cliente.getCarteAssociate().stream().map(numeroCarta -> numeroCarta.numero()).toList();
     }
 
     
