@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import neo.bank.cliente.domain.models.events.CartaAssociata;
 import neo.bank.cliente.domain.models.events.ClienteCreato;
 import neo.bank.cliente.domain.models.events.ContoCorrenteAssociato;
 import neo.bank.cliente.domain.models.events.EmailAggiornata;
@@ -21,6 +22,7 @@ import neo.bank.cliente.domain.models.vo.Email;
 import neo.bank.cliente.domain.models.vo.Iban;
 import neo.bank.cliente.domain.models.vo.IdCliente;
 import neo.bank.cliente.domain.models.vo.NomeCliente;
+import neo.bank.cliente.domain.models.vo.NumeroCarta;
 import neo.bank.cliente.domain.models.vo.Residenza;
 import neo.bank.cliente.domain.models.vo.Telefono;
 import neo.bank.cliente.domain.models.vo.UsernameCliente;
@@ -44,6 +46,7 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
     private Telefono telefono;
     private Residenza residenza;
     private List<Iban> contiAssociati = new ArrayList<>();
+    private List<NumeroCarta> carteAssociate = new ArrayList<>();
 
     public static Cliente crea(GeneratoreIdClienteService generatoreIdCliente, UsernameCliente usernameCliente,
         NomeCliente nomeCliente,
@@ -63,6 +66,13 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
 
     public void aggiornaResidenza(Residenza residenza) {
         events(new ResidenzaAggiornata(residenza));
+    }
+
+    public void associaCarta(NumeroCarta numeroCarta, Iban iban) {
+        if(!contiAssociati.contains(iban)) {
+            throw new BusinessRuleException("Iban non associata al cliente");
+        }
+        events(new CartaAssociata(numeroCarta));
     }
 
     public void aggiornaTelefono(Telefono telefono) {
@@ -99,6 +109,10 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
         this.residenza = event.residenza();
     }
 
+    private void apply(CartaAssociata event) {
+        this.carteAssociate.add(event.numeroCarta());
+    }
+
     private void apply(ContoCorrenteAssociato event) {
         this.contiAssociati.add(event.iban());
     }
@@ -119,6 +133,7 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
             case TelefonoAggiornato ev -> apply((TelefonoAggiornato) ev);
             case EmailAggiornata ev -> apply((EmailAggiornata) ev);
             case ContoCorrenteAssociato ev -> apply((ContoCorrenteAssociato) ev);
+            case CartaAssociata ev -> apply((CartaAssociata) ev);
             default -> throw new IllegalArgumentException("Evento non supportato");
         }
     }

@@ -16,13 +16,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import neo.bank.cliente.application.ClienteUseCase;
-import neo.bank.cliente.application.ports.input.dto.AssociaContoCorrenteCmd;
+import neo.bank.cliente.application.ports.input.dto.AssociaCartaCmd;
 import neo.bank.cliente.domain.models.vo.Iban;
+import neo.bank.cliente.domain.models.vo.NumeroCarta;
 import neo.bank.cliente.domain.models.vo.UsernameCliente;
 
 @ApplicationScoped
 @Slf4j
-public class ContoCorrenteConsumer {
+public class CartaConsumer {
 
     @Inject
     private ObjectMapper mapper;
@@ -30,10 +31,10 @@ public class ContoCorrenteConsumer {
     @Inject
     private ClienteUseCase app;
 
-    private static final String EVENT_OWNER = "CONTO_CORRENTE";
-    private static final String CONTO_CORRENTE_APERTO_EVENT_NAME = "ContoCorrenteAperto";
+    private static final String EVENT_OWNER = "CARTA_PREPAGATA";
+    private static final String CARTA_PREPAGATA_CREATA_EVENT_NAME = "CartaPrepagataCreata";
 
-    @Incoming("conto-corrente-notifications")
+    @Incoming("carta-notifications")
     @Blocking
     public CompletionStage<Void> consume(Message<String> msg) {
         var metadata = msg.getMetadata(IncomingKafkaRecordMetadata.class).orElseThrow();
@@ -45,10 +46,11 @@ public class ContoCorrenteConsumer {
         if (aggregateName.equals(EVENT_OWNER)) {
             JsonNode json = convertToJsonNode(payload);
             switch (eventType) {
-                case CONTO_CORRENTE_APERTO_EVENT_NAME:{
+                case CARTA_PREPAGATA_CREATA_EVENT_NAME:{
                     String iban = json.get("iban").asText();
                     String usernameCliente = json.get("usernameCliente").asText();
-                    app.associaContoCorrente(new AssociaContoCorrenteCmd(new Iban(iban), new UsernameCliente(usernameCliente)));
+                    String numeroCarta = json.get("numeroCarta").asText();
+                    app.associaCarta(new AssociaCartaCmd(new NumeroCarta(numeroCarta), new Iban(iban), new UsernameCliente(usernameCliente)));
                     break;
                 }
                 default:

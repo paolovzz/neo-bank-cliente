@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import neo.bank.cliente.application.ports.input.dto.AggiornaEmailCmd;
 import neo.bank.cliente.application.ports.input.dto.AggiornaResidenzaCmd;
 import neo.bank.cliente.application.ports.input.dto.AggiornaTelefonoCmd;
+import neo.bank.cliente.application.ports.input.dto.AssociaCartaCmd;
 import neo.bank.cliente.application.ports.input.dto.AssociaContoCorrenteCmd;
 import neo.bank.cliente.application.ports.input.dto.CreaClienteCmd;
 import neo.bank.cliente.application.ports.output.ClienteOutputPort;
@@ -46,6 +47,15 @@ public class ClienteUseCase {
         cliente.associaContoCorrente(cmd.getIban());
         clienteOutputPort.salva(cliente);
         log.info("Comando [associaContoCorrente] terminato...");
+    }
+
+     public void associaCarta(AssociaCartaCmd cmd) {
+        log.info("Comando [associaCarta] in esecuzione...");
+        IdCliente idCliente = usernamePort.recuperaDaUsername(cmd.getUsernameCliente());
+        Cliente cliente = clienteOutputPort.recuperaDaId(idCliente);
+        cliente.associaCarta(cmd.getNumeroCarta(), cmd.getIban());
+        clienteOutputPort.salva(cliente);
+        log.info("Comando [associaCarta] terminato...");
     }
 
     public Cliente recuperaClienteDaUsername(UsernameCliente usernameCliente) {
