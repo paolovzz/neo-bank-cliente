@@ -6,10 +6,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import neo.bank.cliente.application.ClienteUseCase;
@@ -34,47 +36,59 @@ public class ClienteResource {
     @Inject
     private ClienteUseCase app;
 
-    @Path("/{username}")
+    @Context
+    private HttpHeaders headers;
+
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response recuperaClienteDaUsername(@PathParam(value = "username") String username) {
-
+    public Response recuperaClienteDaUsername() {
+        String username = recuperaUtenteAutenticato();
         Cliente cliente = app.recuperaClienteDaUsername(new UsernameCliente(username));
         ClienteInfoResponse bodyResponse = new ClienteInfoResponse(cliente);
         return Response.ok(bodyResponse).build();
     }
 
-    @Path("/{username}/iban")
+    @Path("/iban")
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response recuperaIbanDaUsername(@PathParam(value = "username") String username) {
-
+    public Response recuperaIbanDaUsername() {
+        String username = recuperaUtenteAutenticato();
         List<Iban> listaIban = app.recuperaCodiciIbanDelCliente(new UsernameCliente(username));
         return Response.ok(listaIban.stream().map(iban-> iban.codice())).build();
     }
 
-    @Path("/{username}/residenza")
+    @Path("/residenza")
     @PUT // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response aggiornaResidenza(@PathParam(value = "username") String username,  RichiediAggiornamentoResidenzaRequest req) {
+    public Response aggiornaResidenza( RichiediAggiornamentoResidenzaRequest req) {
+        String username = recuperaUtenteAutenticato();
         app.aggiornaResidenza(new AggiornaResidenzaCmd(new UsernameCliente(username), new Residenza(req.getResidenza())));
         return Response.noContent().build();
     }
 
-    @Path("/{username}/telefono")
+    @Path("/telefono")
     @PUT // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response aggiornaTelefono(@PathParam(value = "username") String username,  RichiediAggiornamentoTelefonoRequest req) {
+    public Response aggiornaTelefono(RichiediAggiornamentoTelefonoRequest req) {
+        String username = recuperaUtenteAutenticato();
         app.aggiornaTelefono(new AggiornaTelefonoCmd(new UsernameCliente(username), new Telefono(req.getTelefono())));
         return Response.noContent().build();
     }
 
-    @Path("/{username}/email")
+    @Path("/email")
     @PUT // Sarebbe piu' corretto PATCH ma quarkus non lo supporta
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response aggiornaEmail(@PathParam(value = "username") String username,  RichiediAggiornamentoEmailRequest req) {
+    public Response aggiornaEmail( RichiediAggiornamentoEmailRequest req) {
+        String username = recuperaUtenteAutenticato();
         app.aggiornaEmail(new AggiornaEmailCmd(new UsernameCliente(username), new Email(req.getEmail())));
         return Response.noContent().build();
+    }
+
+    private String recuperaUtenteAutenticato() {
+        String username = headers.getHeaderString("X-Authenticated-User");
+        if (username == null)
+            throw new NotAuthorizedException("Richiesta non autenticata");
+        return username;
     }
     
 }
