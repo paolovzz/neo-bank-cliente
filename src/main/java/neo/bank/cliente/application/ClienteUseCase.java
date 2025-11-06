@@ -59,7 +59,7 @@ public class ClienteUseCase {
     }
 
     public Cliente recuperaClienteDaUsername(UsernameCliente usernameCliente) {
-        log.info("Recupero info cliente per username [{}]", usernameCliente.username());
+        log.info("Recupero info cliente per username [{}]", usernameCliente.getUsername());
         IdCliente idCliente = usernamePort.recuperaDaUsername(usernameCliente);
         Cliente cliente = clienteOutputPort.recuperaDaId(idCliente);
         log.info("Recupero terminato");
@@ -67,7 +67,7 @@ public class ClienteUseCase {
     }
 
     public List<Iban> recuperaCodiciIbanDelCliente(UsernameCliente usernameCliente) {
-        log.info("Recupero iban cliente per username [{}]", usernameCliente.username());
+        log.info("Recupero iban cliente per username [{}]", usernameCliente.getUsername());
         IdCliente idCliente = usernamePort.recuperaDaUsername(usernameCliente);
         Cliente cliente = clienteOutputPort.recuperaDaId(idCliente);
         log.info("Recupero terminato");

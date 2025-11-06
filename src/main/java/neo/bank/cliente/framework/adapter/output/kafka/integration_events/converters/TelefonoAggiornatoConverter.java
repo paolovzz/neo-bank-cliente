@@ -9,7 +9,7 @@ public class TelefonoAggiornatoConverter implements IntegrationEventConverter<Te
 
     @Override
     public IETelefonoAggiornato convert(TelefonoAggiornato domainEvent) {
-        return new IETelefonoAggiornato(domainEvent.telefono().numero());
+        return new IETelefonoAggiornato(domainEvent.getTelefono().getNumero());
     }
 
     @Override

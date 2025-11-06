@@ -80,7 +80,7 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
     }
 
     public void aggiornaEmail(Email email) {
-        events(new EmailAggiornata(usernameCliente, email));
+        events(new EmailAggiornata(email));
     }
 
     public void associaContoCorrente(Iban iban) {
@@ -92,37 +92,37 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
     }
 
     private void apply(ClienteCreato event) {
-        this.idCliente = event.idCliente();
-        this.nomeCliente = event.nomeCliente();
-        this.usernameCliente = event.usernameCliente();
-        this.nomeCliente = event.nomeCliente();
-        this.cognomeCliente = event.cognomeCliente();
-        this.dataNascita = event.dataNascita();
-        this.codiceFiscale = event.codiceFiscale();
-        this.email = event.email();
-        this.telefono = event.telefono();
-        this.residenza = event.residenza();
+        this.idCliente = event.getIdCliente();
+        this.nomeCliente = event.getNomeCliente();
+        this.usernameCliente = event.getUsernameCliente();
+        this.nomeCliente = event.getNomeCliente();
+        this.cognomeCliente = event.getCognomeCliente();
+        this.dataNascita = event.getDataNascita();
+        this.codiceFiscale = event.getCodiceFiscale();
+        this.email = event.getEmail();
+        this.telefono = event.getTelefono();
+        this.residenza = event.getResidenza();
 
     }
 
     private void apply(ResidenzaAggiornata event) {
-        this.residenza = event.residenza();
+        this.residenza = event.getResidenza();
     }
 
     private void apply(CartaAssociata event) {
-        this.carteAssociate.add(event.numeroCarta());
+        this.carteAssociate.add(event.getNumeroCarta());
     }
 
     private void apply(ContoCorrenteAssociato event) {
-        this.contiAssociati.add(event.iban());
+        this.contiAssociati.add(event.getIban());
     }
 
     private void apply(TelefonoAggiornato event) {
-        this.telefono = event.telefono();
+        this.telefono = event.getTelefono();
     }
 
     private void apply(EmailAggiornata event) {
-        this.email = event.email();
+        this.email = event.getEmail();
     }
 
     @Override

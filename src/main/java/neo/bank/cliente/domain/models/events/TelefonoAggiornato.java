@@ -1,8 +1,12 @@
 package neo.bank.cliente.domain.models.events;
 
+import lombok.Value;
 import neo.bank.cliente.domain.models.vo.Telefono;
 
-public record TelefonoAggiornato(Telefono telefono) implements EventPayload {
+@Value
+public class TelefonoAggiornato implements EventPayload {
+
+    private Telefono telefono;
 
     @Override
     public String eventType() {

@@ -54,7 +54,7 @@ public class ClienteResource {
     public Response recuperaIbanDaUsername() {
         String username = recuperaUtenteAutenticato();
         List<Iban> listaIban = app.recuperaCodiciIbanDelCliente(new UsernameCliente(username));
-        return Response.ok(listaIban.stream().map(iban-> iban.codice())).build();
+        return Response.ok(listaIban.stream().map(iban-> iban.getCodice())).build();
     }
 
     @Path("/residenza")

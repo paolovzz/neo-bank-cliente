@@ -9,7 +9,7 @@ public class ContoCorrenteAssociatoConverter implements IntegrationEventConverte
 
     @Override
     public IEContoCorrenteAssociato convert(ContoCorrenteAssociato domainEvent) {
-        return new IEContoCorrenteAssociato(domainEvent.iban().codice());
+        return new IEContoCorrenteAssociato(domainEvent.getIban().getCodice());
     }
 
     @Override

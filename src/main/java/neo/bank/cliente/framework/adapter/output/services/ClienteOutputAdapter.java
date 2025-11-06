@@ -25,14 +25,14 @@ public class ClienteOutputAdapter  implements ClienteOutputPort{
 
         List<EventPayload> events = cc.popChanges();
         ccRepo.save(cc.getIdCliente(), events);
-        publisherPort.publish(Cliente.AGGREGATE_NAME, cc.getIdCliente().id(), events);
+        publisherPort.publish(Cliente.AGGREGATE_NAME, cc.getIdCliente().getId(), events);
     }
 
     @Override
     public Cliente recuperaDaId(IdCliente idCliente) {
-        Cliente cliente = ccRepo.findById(idCliente.id());
+        Cliente cliente = ccRepo.findById(idCliente.getId());
         if(cliente == null) {
-            throw new ClienteNonTrovatoException(idCliente.id());
+            throw new ClienteNonTrovatoException(idCliente.getId());
         }
        return cliente;
     }

@@ -72,7 +72,7 @@ public class AuthConsumer {
                             
                         }catch(RuntimeException ex) {
                             log.error("Errore.", ex);
-                            clienteEventPublisher.publishError(Cliente.AGGREGATE_NAME, "CreazioneClienteFallita", new IECreazioneClienteFallita(usernameCliente.username(), emailCliente.indirizzo()));
+                            clienteEventPublisher.publishError(Cliente.AGGREGATE_NAME, "CreazioneClienteFallita", new IECreazioneClienteFallita(usernameCliente.getUsername(), emailCliente.getIndirizzo()));
                         }
                         break;
                     }

@@ -27,12 +27,12 @@ public class ClienteRepositoryImpl implements PanacheMongoRepository<EventStoreE
 
     @Override
     public void save(IdCliente idCliente, List<EventPayload> events) {
-        long nextSequence = getNextSequence(idCliente.id());
+        long nextSequence = getNextSequence(idCliente.getId());
         try {
             for (EventPayload ev : events) {
                 EventStoreEntity entity;
 
-                entity = new EventStoreEntity(idCliente.id(), ev.eventType(), mapper.writeValueAsString(ev),
+                entity = new EventStoreEntity(idCliente.getId(), ev.eventType(), mapper.writeValueAsString(ev),
                         nextSequence);
 
                 entity.persist();

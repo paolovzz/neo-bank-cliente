@@ -16,12 +16,12 @@ public class UsernameProjectionRepositoryImpl implements PanacheMongoRepositoryB
     @Override
     public void salva(UsernameCliente usernameCliente, IdCliente idCliente) {
         log.info("Aggiorno la projection...");
-        persist(new UsernameProjectionEntity(usernameCliente.username(), idCliente.id()));
+        persist(new UsernameProjectionEntity(usernameCliente.getUsername(), idCliente.getId()));
     }
 
     @Override
     public IdCliente recuperaDaUsername(UsernameCliente username) {
-        UsernameProjectionEntity entity = findById(username.username());
+        UsernameProjectionEntity entity = findById(username.getUsername());
         return entity == null ? null : new IdCliente(entity.getIdCliente());
     }
 

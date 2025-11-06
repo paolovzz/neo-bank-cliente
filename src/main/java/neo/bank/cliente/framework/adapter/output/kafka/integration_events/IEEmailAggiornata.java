@@ -6,6 +6,5 @@ import lombok.Value;
 
 @Value
 public class IEEmailAggiornata implements Serializable {
-    private String username;
     private String email;
 }

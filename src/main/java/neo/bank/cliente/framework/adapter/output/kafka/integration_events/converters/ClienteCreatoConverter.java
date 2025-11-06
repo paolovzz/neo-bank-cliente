@@ -10,10 +10,10 @@ public class ClienteCreatoConverter
 
     @Override
     public IEClienteCreato convert(ClienteCreato domainEvent) {
-        return new IEClienteCreato(domainEvent.idCliente().id(), domainEvent.usernameCliente().username(),
-                domainEvent.nomeCliente().nome(), domainEvent.cognomeCliente().cognome(),
-                domainEvent.dataNascita().data(), domainEvent.codiceFiscale().codice(), domainEvent.email().indirizzo(),
-                domainEvent.telefono().numero(), domainEvent.residenza().residenza());
+        return new IEClienteCreato(domainEvent.getIdCliente().getId(), domainEvent.getUsernameCliente().getUsername(),
+                domainEvent.getNomeCliente().getNome(), domainEvent.getCognomeCliente().getCognome(),
+                domainEvent.getDataNascita().getData(), domainEvent.getCodiceFiscale().getCodice(), domainEvent.getEmail().getIndirizzo(),
+                domainEvent.getTelefono().getNumero(), domainEvent.getResidenza().getResidenza());
     }
 
     @Override

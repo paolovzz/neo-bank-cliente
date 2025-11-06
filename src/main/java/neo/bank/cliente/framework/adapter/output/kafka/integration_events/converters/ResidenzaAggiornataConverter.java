@@ -10,7 +10,7 @@ public class ResidenzaAggiornataConverter
 
     @Override
     public IEResidenzaAggiornata convert(ResidenzaAggiornata domainEvent) {
-        return new IEResidenzaAggiornata(domainEvent.residenza().residenza());
+        return new IEResidenzaAggiornata(domainEvent.getResidenza().getResidenza());
     }
 
     @Override

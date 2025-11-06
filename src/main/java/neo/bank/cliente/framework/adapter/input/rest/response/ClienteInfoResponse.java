@@ -20,15 +20,15 @@ public class ClienteInfoResponse {
     private List<String> carteAssociate;
 
     public ClienteInfoResponse(Cliente cliente) {
-        this.nome = cliente.getNomeCliente().nome();
-        this.cognome = cliente.getCognomeCliente().cognome();
-        this.dataNascita = cliente.getDataNascita().data();
-        this.email = cliente.getEmail().indirizzo();
-        this.codiceFiscale = cliente.getCodiceFiscale().codice();
-        this.telefono = cliente.getTelefono().numero();
-        this.residenza = cliente.getResidenza().residenza();
-        this.contiAssociati = cliente.getContiAssociati().stream().map(iban -> iban.codice()).toList();
-        this.carteAssociate = cliente.getCarteAssociate().stream().map(numeroCarta -> numeroCarta.numero()).toList();
+        this.nome = cliente.getNomeCliente().getNome();
+        this.cognome = cliente.getCognomeCliente().getCognome();
+        this.dataNascita = cliente.getDataNascita().getData();
+        this.email = cliente.getEmail().getIndirizzo();
+        this.codiceFiscale = cliente.getCodiceFiscale().getCodice();
+        this.telefono = cliente.getTelefono().getNumero();
+        this.residenza = cliente.getResidenza().getResidenza();
+        this.contiAssociati = cliente.getContiAssociati().stream().map(iban -> iban.getCodice()).toList();
+        this.carteAssociate = cliente.getCarteAssociate().stream().map(numeroCarta -> numeroCarta.getNumero()).toList();
     }
 
     

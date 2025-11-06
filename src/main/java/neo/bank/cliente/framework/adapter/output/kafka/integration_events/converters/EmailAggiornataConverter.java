@@ -9,7 +9,7 @@ public class EmailAggiornataConverter implements IntegrationEventConverter<Email
 
     @Override
     public IEEmailAggiornata convert(EmailAggiornata domainEvent) {
-        return new IEEmailAggiornata(domainEvent.usenameCliente().username(), domainEvent.email().indirizzo());
+        return new IEEmailAggiornata( domainEvent.getEmail().getIndirizzo());
     }
 
     @Override
