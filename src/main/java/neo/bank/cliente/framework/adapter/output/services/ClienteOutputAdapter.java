@@ -17,22 +17,22 @@ import neo.bank.cliente.domain.models.vo.IdCliente;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ClienteOutputAdapter  implements ClienteOutputPort{
 
-    private final ClienteRepositoryPort ccRepo;
+    private final ClienteRepositoryPort clienteRepo;
     private final EventsPublisherPort publisherPort;
 
     @Override
-    public void salva(Cliente cc) {
+    public void salva(Cliente cliente) {
 
-        List<EventPayload> events = cc.popChanges();
-        ccRepo.save(cc.getIdCliente(), events);
-        publisherPort.publish(Cliente.AGGREGATE_NAME, cc.getIdCliente().getId(), events);
+        List<EventPayload> events = cliente.popChanges();
+        clienteRepo.save(cliente.getIdCliente(), events);
+        publisherPort.publish(Cliente.AGGREGATE_NAME, cliente.getIdCliente().getId(), events);
     }
 
     @Override
     public Cliente recuperaDaId(IdCliente idCliente) {
-        Cliente cliente = ccRepo.findById(idCliente.getId());
+        Cliente cliente = clienteRepo.findById(idCliente.getId());
         if(cliente == null) {
-            throw new ClienteNonTrovatoException(idCliente.getId());
+            throw new ClienteNonTrovatoException(idCliente);
         }
        return cliente;
     }

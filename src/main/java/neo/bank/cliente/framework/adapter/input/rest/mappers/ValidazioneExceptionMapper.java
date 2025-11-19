@@ -3,16 +3,16 @@ package neo.bank.cliente.framework.adapter.input.rest.mappers;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import neo.bank.cliente.application.exceptions.ClienteNonTrovatoException;
+import neo.bank.cliente.domain.models.exceptions.ValidazioneException;
 import neo.bank.cliente.framework.adapter.input.rest.model.ErrorResponse;
 
 @Provider
-public class ClienteNonTrovatoExceptionMapper implements ExceptionMapper<ClienteNonTrovatoException> {
+public class ValidazioneExceptionMapper implements ExceptionMapper<ValidazioneException> {
 
     @Override
-    public Response toResponse(ClienteNonTrovatoException exception) {
+    public Response toResponse(ValidazioneException exception) {
         ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return Response.status(404)
+        return Response.status(400)
                        .entity(errorResponse)
                        .build();
     }

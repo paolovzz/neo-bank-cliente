@@ -2,8 +2,8 @@ package neo.bank.cliente.domain.models.aggregates;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +26,10 @@ import neo.bank.cliente.domain.models.vo.NumeroCarta;
 import neo.bank.cliente.domain.models.vo.Residenza;
 import neo.bank.cliente.domain.models.vo.Telefono;
 import neo.bank.cliente.domain.models.vo.UsernameCliente;
-import neo.bank.cliente.domain.services.GeneratoreIdClienteService;
 
 
 @Slf4j
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Cliente extends AggregateRoot<Cliente> implements Applier  {
 
@@ -48,7 +46,7 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
     private List<Iban> contiAssociati = new ArrayList<>();
     private List<NumeroCarta> carteAssociate = new ArrayList<>();
 
-    public static Cliente crea(GeneratoreIdClienteService generatoreIdCliente, UsernameCliente usernameCliente,
+    public static Cliente crea(UsernameCliente usernameCliente,
         NomeCliente nomeCliente,
         CognomeCliente cognomeCliente,
         DataNascita dataNascita,
@@ -57,7 +55,7 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
         Telefono telefono,
         Residenza residenza) {
 
-        IdCliente idCliente = generatoreIdCliente.genera();
+        IdCliente idCliente = new IdCliente(UUID.randomUUID().toString());
         Cliente cliente = new Cliente();
         cliente.idCliente = idCliente;
         cliente.events(new ClienteCreato(idCliente, usernameCliente, nomeCliente, cognomeCliente, dataNascita, codiceFiscale, email, telefono, residenza));

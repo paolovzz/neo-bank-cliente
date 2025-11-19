@@ -50,40 +50,40 @@ public class AuthConsumer {
 
     @Incoming("auth-notifications")
     public CompletionStage<Void> consume(Message<String> msg) {
-            var metadata = msg.getMetadata(IncomingKafkaRecordMetadata.class).orElseThrow();
-            String eventType = new String(metadata.getHeaders().lastHeader("eventType").value());
-            String aggregateName = new String(metadata.getHeaders().lastHeader("aggregateName").value());
-            String payload = msg.getPayload();
-            log.info("INCOMING:\n- EventType => {}\n- AggregateName => {}", eventType, aggregateName);
-            if (aggregateName.equals(EVENT_OWNER)) {
-                JsonNode json = convertToJsonNode(payload);
-                switch (eventType) {
-                    case EVENT_UTENTE_REGISTRATO:{
-                        UsernameCliente usernameCliente = new UsernameCliente(json.get("username").asText());
-                        Email emailCliente = new Email(json.get("email").asText());
-                        try {
-                            NomeCliente nomeCliente = new NomeCliente(json.get("nome").asText());
-                            CognomeCliente cognomeCliente = new CognomeCliente(json.get("cognome").asText());
-                            DataNascita dataNascita = new DataNascita(LocalDate.parse(json.get("dataNascita").asText()));
-                            Telefono telefono = new Telefono(json.get("telefono").asText());
-                            Residenza residenza = new Residenza(json.get("residenza").asText());
-                            CodiceFiscale codiceFiscale = new CodiceFiscale(json.get("codiceFiscale").asText());
-                            app.creaCliente(new CreaClienteCmd(usernameCliente, nomeCliente, cognomeCliente, dataNascita, codiceFiscale, emailCliente, telefono, residenza));
-                            
-                        }catch(RuntimeException ex) {
-                            log.error("Errore.", ex);
-                            clienteEventPublisher.publishError(Cliente.AGGREGATE_NAME, "CreazioneClienteFallita", new IECreazioneClienteFallita(usernameCliente.getUsername(), emailCliente.getIndirizzo()));
-                        }
-                        break;
+        var metadata = msg.getMetadata(IncomingKafkaRecordMetadata.class).orElseThrow();
+        String eventType = new String(metadata.getHeaders().lastHeader("eventType").value());
+        String aggregateName = new String(metadata.getHeaders().lastHeader("aggregateName").value());
+        String payload = msg.getPayload();
+        if (aggregateName.equals(EVENT_OWNER)) {
+            JsonNode json = convertToJsonNode(payload);
+            switch (eventType) {
+                case EVENT_UTENTE_REGISTRATO:{
+                    UsernameCliente usernameCliente = new UsernameCliente(json.get("username").asText());
+                    Email emailCliente = new Email(json.get("email").asText());
+                    try {
+                        NomeCliente nomeCliente = new NomeCliente(json.get("nome").asText());
+                        CognomeCliente cognomeCliente = new CognomeCliente(json.get("cognome").asText());
+                        DataNascita dataNascita = new DataNascita(LocalDate.parse(json.get("dataNascita").asText()));
+                        Telefono telefono = new Telefono(json.get("telefono").asText());
+                        Residenza residenza = new Residenza(json.get("residenza").asText());
+                        CodiceFiscale codiceFiscale = new CodiceFiscale(json.get("codiceFiscale").asText());
+                        app.creaCliente(
+                            new CreaClienteCmd(usernameCliente, nomeCliente, cognomeCliente, dataNascita,
+                                codiceFiscale, emailCliente, telefono, residenza));
+                    } catch (RuntimeException ex) {
+                        log.error("Errore.", ex);
+                        clienteEventPublisher.publishError(Cliente.AGGREGATE_NAME, 
+                        "CreazioneClienteFallita", new IECreazioneClienteFallita(usernameCliente.getUsername(), emailCliente.getIndirizzo()));
                     }
-                    default:
-                        log.warn("Evento [{}] non gestito...", eventType);
-                        break;
+                    break;
+                }
+                default:
+                    log.warn("Evento [{}] non gestito...", eventType);
+                    break;
                 }
             } else {
                 log.warn("Owner non gestito [{}]", aggregateName);
             }
-            
         return msg.ack();
     }
 
@@ -95,3 +95,8 @@ public class AuthConsumer {
         }
     }
 }
+
+
+
+
+

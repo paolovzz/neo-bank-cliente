@@ -30,10 +30,11 @@ public class ClienteRepositoryImpl implements PanacheMongoRepository<EventStoreE
         long nextSequence = getNextSequence(idCliente.getId());
         try {
             for (EventPayload ev : events) {
-                EventStoreEntity entity;
-
-                entity = new EventStoreEntity(idCliente.getId(), ev.eventType(), mapper.writeValueAsString(ev),
-                        nextSequence);
+                EventStoreEntity entity = new EventStoreEntity(
+                    idCliente.getId(), 
+                    ev.eventType(), 
+                    mapper.writeValueAsString(ev),
+                    nextSequence);
 
                 entity.persist();
                 nextSequence += 1;
@@ -41,6 +42,15 @@ public class ClienteRepositoryImpl implements PanacheMongoRepository<EventStoreE
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    private long getNextSequence(String aggregateId) {
+        EventStoreEntity last = EventStoreEntity.find("aggregateId = ?1", aggregateId)
+                .stream()
+                .map(e -> (EventStoreEntity) e)
+                .max(Comparator.comparingLong(se -> se.getSequence()))
+                .orElse(null);
+        return last != null ? last.getSequence() + 1 : 1;
     }
 
     @Override
@@ -73,12 +83,4 @@ public class ClienteRepositoryImpl implements PanacheMongoRepository<EventStoreE
         }
     }
 
-    private long getNextSequence(String aggregateId) {
-        EventStoreEntity last = EventStoreEntity.find("aggregateId = ?1", aggregateId)
-                .stream()
-                .map(e -> (EventStoreEntity) e)
-                .max(Comparator.comparingLong(se -> se.getSequence()))
-                .orElse(null);
-        return last != null ? last.getSequence() + 1 : 1;
-    }
 }

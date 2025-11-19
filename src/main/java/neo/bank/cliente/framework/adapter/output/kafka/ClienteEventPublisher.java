@@ -26,11 +26,11 @@ public class ClienteEventPublisher implements EventsPublisherPort {
     @Inject
     private ObjectMapper mapper;
 
-    @Channel("cliente-notifications")
-    private Emitter<String> emitter;
-
     @Channel("cliente-error-notifications")
     private Emitter<String> errorEmitter;
+
+    @Channel("cliente-notifications")
+    private Emitter<String> emitter;
 
     @Inject
     private IntegrationEventConverterFactory factory;
