@@ -78,7 +78,7 @@ public class Cliente extends AggregateRoot<Cliente> implements Applier  {
     }
 
     public void aggiornaEmail(Email email) {
-        events(new EmailAggiornata(email));
+        events(new EmailAggiornata(email, usernameCliente));
     }
 
     public void associaContoCorrente(Iban iban) {
